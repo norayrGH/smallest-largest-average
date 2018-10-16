@@ -1,6 +1,7 @@
 package com.example.task.controller;
 
 
+import com.example.task.dto.SmallLargeAverageDTO;
 import com.example.task.service.SmallLargeAverageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -19,13 +20,19 @@ SmallLargeAverageService smallLargeAverageService;
 
 
 @GetMapping(value = {"/give_number"})
-    public ResponseEntity<String> saveNumber(@Param("number")Float number){
+    public ResponseEntity<SmallLargeAverageDTO> saveNumber(@Param("number")Float number){
+    SmallLargeAverageDTO smallLargeAverageDTO = null;
     try {
+        Float smallest,largest,average;
             smallLargeAverageService.saveNumber(number);
+        smallest = smallLargeAverageService.getSmallestNumber();
+        largest  = smallLargeAverageService.getLargestNumber();
+        average  = smallLargeAverageService.getAverageOfNumber();
+         smallLargeAverageDTO = new SmallLargeAverageDTO(smallest,largest,average);
         }catch (Exception e){
-            return new ResponseEntity<String>("not saved",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<SmallLargeAverageDTO>(smallLargeAverageDTO,HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("saved",HttpStatus.OK);
+        return new ResponseEntity<SmallLargeAverageDTO>(smallLargeAverageDTO,HttpStatus.OK);
     }
     @GetMapping(value = {"/get_smallest_number"})
     public ResponseEntity<String> getSmalestNumber(){
